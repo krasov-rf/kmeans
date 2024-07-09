@@ -28,7 +28,7 @@ func BenchmarkElbowRandClusters(b *testing.B) {
 
 func BenchmarkFindRandClusters(b *testing.B) {
 	countClusrters := 10
-	sizes := cluster.GenerateSizes(1000)
+	sizes := cluster.GenerateSizes(10000)
 	sizes = cluster.CleanEmissions(sizes)
 
 	b.StartTimer()

@@ -79,6 +79,18 @@ func NewCentroids(dots, centroids []Size) map[Size][]Size {
 	return newCentroids
 }
 
+// ищем минимальную дистанцию до центроида
+func FindMinDistance(dot Size, kDots []Size) float64 {
+	minDistance := math.MaxFloat64
+	for k := range kDots {
+		distance := math.Pow(Distance(kDots[k], dot), 2)
+		if minDistance > distance {
+			minDistance = distance
+		}
+	}
+	return minDistance
+}
+
 // выбирает начальные равноудаленные центроиды
 func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
 	var kDots []Size
@@ -86,27 +98,23 @@ func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
 
 	kDots = append(kDots, dots[RandInt(0, dotsCount)])
 
-	for numCentroid := countCentroids; numCentroid != 0; numCentroid-- {
+	for len(kDots) < countCentroids {
 		var sumAllDistance float64
-		centroids := make(map[Size][]float64, dotsCount)
-		for _, k := range kDots {
-			for _, dot := range dots {
-				d := math.Pow(Distance(k, dot), 2)
-				sumAllDistance += d
-				centroids[dot] = append(centroids[dot], d)
-			}
+		minDistancesForDots := make([]float64, dotsCount)
+
+		for d := range dots {
+			minDistance := FindMinDistance(dots[d], kDots)
+			minDistancesForDots[d] = minDistance
+			sumAllDistance += sumAllDistance
 		}
 
 		var sumCenter float64
 		rnd := rand.Float64() * sumAllDistance
-	out:
-		for _, k := range kDots {
-			for _, dot := range dots {
-				sumCenter += math.Pow(Distance(k, dot), 2)
-				if sumCenter > rnd {
-					kDots = append(kDots, dot)
-					break out
-				}
+		for dot, distance := range minDistancesForDots {
+			sumCenter += distance
+			if sumCenter > rnd {
+				kDots = append(kDots, dots[dot])
+				break
 			}
 		}
 	}
@@ -125,9 +133,9 @@ func FindClusters(sizes, centroids []Size) map[Size][]Size {
 			for i, w := range lastWcss {
 				if currentWcss[i] != w {
 					okWcss = true
-				} else {
-					okWcss = false
+					continue
 				}
+				okWcss = false
 			}
 			if !okWcss {
 				break
