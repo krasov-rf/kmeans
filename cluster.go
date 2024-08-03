@@ -1,4 +1,4 @@
-package cluster
+package kmeans
 
 import (
 	"math"
@@ -91,8 +91,8 @@ func FindMinDistance(dot Size, kDots []Size) float64 {
 	return minDistance
 }
 
-// выбирает начальные равноудаленные центроиды
-func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
+// выбирает начальные равноудаленные центроиды kmeans++
+func SelectFirstCentroidsPlus(dots []Size, countCentroids int) []Size {
 	var kDots []Size
 	dotsCount := len(dots)
 
@@ -117,6 +117,17 @@ func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
 				break
 			}
 		}
+	}
+	return kDots
+}
+
+// выбираем первоначальные центроиды kmeans
+func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
+	var kDots []Size
+	dotsCount := len(dots)
+	for ; countCentroids != 0; countCentroids-- {
+
+		kDots = append(kDots, dots[RandInt(0, dotsCount)])
 	}
 	return kDots
 }

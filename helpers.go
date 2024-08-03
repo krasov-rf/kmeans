@@ -1,4 +1,4 @@
-package cluster
+package kmeans
 
 import (
 	"image/color"
