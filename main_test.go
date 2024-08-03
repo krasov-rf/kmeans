@@ -7,14 +7,14 @@ import (
 func BenchmarkElbowRandClusters(b *testing.B) {
 	countClusrters := 20
 	res := make(map[float64]float64, countClusrters)
-	Dots := GenerateDots(1000)
-	Dots = CleanEmissions(Dots)
+	dots := GenerateDots(1000)
+	dots = CleanEmissions(dots)
 
 	b.StartTimer()
 
 	for i := 1; i < countClusrters; i++ {
-		centroids := SelectFirstCentroids(Dots, i)
-		clusters := FindClusters(Dots, centroids)
+		centroids := SelectFirstCentroids(dots, i)
+		clusters := FindClusters(dots, centroids)
 
 		res[float64(i)] = SumPowDistance(clusters)
 	}
@@ -26,13 +26,13 @@ func BenchmarkElbowRandClusters(b *testing.B) {
 
 func BenchmarkKmeansPlus(b *testing.B) {
 	countClusters := 10
-	Dots := GenerateDots(10000)
-	Dots = CleanEmissions(Dots)
+	dots := GenerateDots(10000)
+	dots = CleanEmissions(dots)
 
 	b.StartTimer()
 
-	centroids := SelectFirstCentroidsPlus(Dots, countClusters)
-	clusters := FindClusters(Dots, centroids)
+	centroids := SelectFirstCentroidsPlus(dots, countClusters)
+	clusters := FindClusters(dots, centroids)
 
 	b.StopTimer()
 
@@ -41,14 +41,14 @@ func BenchmarkKmeansPlus(b *testing.B) {
 
 func BenchmarkKmeans(b *testing.B) {
 	countClusters := 10
-	Dots := GenerateDots(10000)
-	Dots = CleanEmissions(Dots)
+	dots := GenerateDots(10000)
+	dots = CleanEmissions(dots)
 
-	centroids := SelectFirstCentroids(Dots, countClusters)
+	centroids := SelectFirstCentroids(dots, countClusters)
 
 	b.StartTimer()
 
-	clusters := FindClusters(Dots, centroids)
+	clusters := FindClusters(dots, centroids)
 
 	b.StopTimer()
 
