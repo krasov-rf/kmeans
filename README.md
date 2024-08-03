@@ -13,10 +13,4 @@ centroids := SelectFirstCentroids(dots, countClusters) // K-means++, выбор 
 clusters := FindClusters(dots, centroids) // Сам поиск
 ```
 
-<details> 
-  <summary>Пример работы на реальном датасете (img)</summary>
-  
-  ![image](https://github.com/user-attachments/assets/813b0642-976c-4894-a1c4-3aa4d70cffb5)
-</details>
-
  Статья на хабре: https://habr.com/ru/articles/829202/
