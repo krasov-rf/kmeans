@@ -5,25 +5,25 @@ import (
 	"math/rand"
 )
 
-type Size struct {
+type Dot struct {
 	X float64
 	Y float64
 }
 
-func CalcCentroid(dots []Size) Size {
+func CalcCentroid(dots []Dot) Dot {
 	var x, y float64
 	l := float64(len(dots))
 	for _, s := range dots {
 		x += s.X
 		y += s.Y
 	}
-	return Size{
+	return Dot{
 		X: x / l,
 		Y: y / l,
 	}
 }
 
-func Wcss(clusters map[Size][]Size) []float64 {
+func Wcss(clusters map[Dot][]Dot) []float64 {
 	var wcss float64
 	var deviations, deviationsPercentages []float64
 
@@ -43,19 +43,19 @@ func Wcss(clusters map[Size][]Size) []float64 {
 }
 
 // формула расстояния
-func Distance(oneDot, twoDot Size) float64 {
+func Distance(oneDot, twoDot Dot) float64 {
 	return math.Sqrt(math.Pow(twoDot.X-oneDot.X, 2) + math.Pow(twoDot.Y-oneDot.Y, 2))
 }
 
 // калибровка центроид
-func NewCentroids(dots, centroids []Size) map[Size][]Size {
+func NewCentroids(dots, centroids []Dot) map[Dot][]Dot {
 	countCentroids := len(centroids)
 
-	newClusters := make(map[Size][]Size, countCentroids)
+	newClusters := make(map[Dot][]Dot, countCentroids)
 
 	for _, dot := range dots {
 		near := struct {
-			Cluster Size
+			Cluster Dot
 			D       float64
 		}{
 			D: -1,
@@ -70,7 +70,7 @@ func NewCentroids(dots, centroids []Size) map[Size][]Size {
 		newClusters[near.Cluster] = append(newClusters[near.Cluster], dot)
 	}
 
-	newCentroids := make(map[Size][]Size, countCentroids)
+	newCentroids := make(map[Dot][]Dot, countCentroids)
 
 	for _, cluster := range newClusters {
 		newCentroids[CalcCentroid(cluster)] = cluster
@@ -80,7 +80,7 @@ func NewCentroids(dots, centroids []Size) map[Size][]Size {
 }
 
 // ищем минимальную дистанцию до центроида
-func FindMinDistance(dot Size, kDots []Size) float64 {
+func FindMinDistance(dot Dot, kDots []Dot) float64 {
 	minDistance := math.MaxFloat64
 	for k := range kDots {
 		distance := math.Pow(Distance(kDots[k], dot), 2)
@@ -92,8 +92,8 @@ func FindMinDistance(dot Size, kDots []Size) float64 {
 }
 
 // выбирает начальные равноудаленные центроиды kmeans++
-func SelectFirstCentroidsPlus(dots []Size, countCentroids int) []Size {
-	var kDots []Size
+func SelectFirstCentroidsPlus(dots []Dot, countCentroids int) []Dot {
+	var kDots []Dot
 	dotsCount := len(dots)
 
 	kDots = append(kDots, dots[RandInt(0, dotsCount)])
@@ -122,8 +122,8 @@ func SelectFirstCentroidsPlus(dots []Size, countCentroids int) []Size {
 }
 
 // выбираем первоначальные центроиды kmeans
-func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
-	var kDots []Size
+func SelectFirstCentroids(dots []Dot, countCentroids int) []Dot {
+	var kDots []Dot
 	dotsCount := len(dots)
 	for ; countCentroids != 0; countCentroids-- {
 
@@ -132,13 +132,13 @@ func SelectFirstCentroids(dots []Size, countCentroids int) []Size {
 	return kDots
 }
 
-func FindClusters(sizes, centroids []Size) map[Size][]Size {
+func FindClusters(Dots, centroids []Dot) map[Dot][]Dot {
 	var okWcss bool
 	var lastWcss, currentWcss []float64
-	var res map[Size][]Size
+	var res map[Dot][]Dot
 
 	for {
-		res = NewCentroids(sizes, centroids)
+		res = NewCentroids(Dots, centroids)
 		currentWcss = Wcss(res)
 		if len(lastWcss) != 0 {
 			for i, w := range lastWcss {
@@ -154,7 +154,7 @@ func FindClusters(sizes, centroids []Size) map[Size][]Size {
 		}
 
 		lastWcss = currentWcss
-		centroids = []Size{}
+		centroids = []Dot{}
 		for cluster := range res {
 			centroids = append(centroids, cluster)
 		}
@@ -164,7 +164,7 @@ func FindClusters(sizes, centroids []Size) map[Size][]Size {
 }
 
 // сумма квадрата дистанций до точки
-func SumPowDistance(clusters map[Size][]Size) float64 {
+func SumPowDistance(clusters map[Dot][]Dot) float64 {
 	var sum float64
 	for centroid, dots := range clusters {
 		for _, dot := range dots {
@@ -174,7 +174,7 @@ func SumPowDistance(clusters map[Size][]Size) float64 {
 	return sum
 }
 
-func GetDistances2Dot(dots []Size, targetDot Size) []float64 {
+func GetDistances2Dot(dots []Dot, targetDot Dot) []float64 {
 	var res []float64
 	for _, dot := range dots {
 		res = append(res, Distance(dot, targetDot))
@@ -211,9 +211,9 @@ func zScore(ditstanceToDot, mean, sd float64) float64 {
 }
 
 // чистим входные данные от шума
-func CleanEmissions(dots []Size) []Size {
-	var res []Size
-	startDot := Size{
+func CleanEmissions(dots []Dot) []Dot {
+	var res []Dot
+	startDot := Dot{
 		X: 0, Y: 0,
 	}
 

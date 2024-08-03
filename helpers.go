@@ -19,16 +19,16 @@ func RandFloats(min, max float64) float64 {
 	return min + rand.Float64()*(max-min)
 }
 
-func GenerateSizes(count_dot int) []Size {
-	sizes := []Size{}
+func GenerateDots(count_dot int) []Dot {
+	Dots := []Dot{}
 
 	for i := count_dot; i != 0; i-- {
-		sizes = append(sizes, Size{X: RandFloats(1, 1000), Y: RandFloats(1, 1000)})
+		Dots = append(Dots, Dot{X: RandFloats(1, 1000), Y: RandFloats(1, 1000)})
 	}
-	return sizes
+	return Dots
 }
 
-func PaintClusters(clusters map[Size][]Size, inch font.Length) {
+func PaintClusters(clusters map[Dot][]Dot, inch font.Length) {
 	p := plot.New()
 	for _, c := range clusters {
 		var xys plotter.XYs
